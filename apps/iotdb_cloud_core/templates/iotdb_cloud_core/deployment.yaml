@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ deployment }}"
+  labels:
+    app: auto-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auto-deployment
+  template:
+    metadata:
+      labels:
+        app: auto-deployment
+    spec:
+      containers:
+        - name: portal
+          image: jfeinauer/iotdb-cloud:latest
+          imagePullPolicy: Always

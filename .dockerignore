@@ -1,0 +1,7 @@
+cache/
+node_modules/
+staticfiles/
+tests/
+venv/
+**/.env
+*.sqlite3

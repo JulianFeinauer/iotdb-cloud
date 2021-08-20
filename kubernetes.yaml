@@ -1,0 +1,148 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iotdb-cloud-config
+data:
+  # This should be a secret
+  DATABASE: "postgres://postgres:postgres@postgresql-1629472677:5432/postgres"
+  REDIS: "redis://redis:6379/0"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iotdb-cloud-portal
+  labels:
+    app: iotdb-cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iotdb-cloud
+  template:
+    metadata:
+      labels:
+        app: iotdb-cloud
+    spec:
+      containers:
+        - name: portal
+          image: jfeinauer/iotdb-cloud:latest
+          imagePullPolicy: Always
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: DATABASE
+            - name: CELERY_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: REDIS
+          ports:
+            - name: web
+              containerPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iotdb-cloud-beat
+  labels:
+    app: iotdb-cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iotdb-cloud
+  template:
+    metadata:
+      labels:
+        app: iotdb-cloud
+    spec:
+      containers:
+        - name: portal
+          image: jfeinauer/iotdb-cloud:latest
+          imagePullPolicy: Always
+          args:
+            - "celery-beat"
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: DATABASE
+            - name: CELERY_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: REDIS
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iotdb-cloud-worker
+  labels:
+    app: iotdb-cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iotdb-cloud
+  template:
+    metadata:
+      labels:
+        app: iotdb-cloud
+    spec:
+      containers:
+        - name: portal
+          image: jfeinauer/iotdb-cloud:latest
+          imagePullPolicy: Always
+          args:
+            - "celery-worker"
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: DATABASE
+            - name: CELERY_BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: REDIS
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: iotdb-cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iotdb-cloud
+      service: redis
+  template:
+    metadata:
+      labels:
+        app: iotdb-cloud
+        service: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: iotdb-cloud
+    service: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379

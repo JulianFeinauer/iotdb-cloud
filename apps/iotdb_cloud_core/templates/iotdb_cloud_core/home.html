@@ -1,0 +1,11 @@
+Here are all deployments
+
+<ul>
+{% for deployment in deployments %}
+    <li>{{ deployment.metadata.name }}</li>
+{% endfor %}
+
+<p>
+    Create new Instance: <a href="{% url 'execute' %}">Here</a>
+</p>
+</ul>
