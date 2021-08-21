@@ -29,4 +29,4 @@ jobs:
         with:
           file: "Dockerfile"
           push: true
-          tags: jfeinauer/iotdb-cloud:latest,jfeinauer/iotdb-cloud:$GITHUB_SHA
+          tags: jfeinauer/iotdb-cloud:latest,jfeinauer/iotdb-cloud:${{ github.sha }}
