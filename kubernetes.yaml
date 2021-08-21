@@ -4,7 +4,7 @@ metadata:
   name: iotdb-cloud-config
 data:
   # This should be a secret
-  DATABASE: "postgres://postgres:postgres@postgresql-1629472677:5432/postgres"
+  DATABASE: "postgres://postgres:postgres@postgresql-1629539069:5432/postgres"
   REDIS: "redis://redis:6379/0"
 ---
 apiVersion: apps/v1
@@ -18,11 +18,14 @@ spec:
   selector:
     matchLabels:
       app: iotdb-cloud
+      module: manager
   template:
     metadata:
       labels:
         app: iotdb-cloud
+        module: manager
     spec:
+      serviceAccountName: iotdb-manager
       containers:
         - name: portal
           image: jfeinauer/iotdb-cloud:latest
@@ -58,6 +61,7 @@ spec:
       labels:
         app: iotdb-cloud
     spec:
+      serviceAccountName: iotdb-manager
       containers:
         - name: portal
           image: jfeinauer/iotdb-cloud:latest
@@ -92,6 +96,7 @@ spec:
       labels:
         app: iotdb-cloud
     spec:
+      serviceAccountName: iotdb-manager
       containers:
         - name: portal
           image: jfeinauer/iotdb-cloud:latest
@@ -146,3 +151,39 @@ spec:
     - protocol: TCP
       port: 6379
       targetPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iotdb-cloud-manager
+spec:
+  selector:
+    app: iotdb-cloud
+    module: manager
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: iotdb-manager-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+    - hosts:
+        - iotdb.demo.service.pragmaticindustries.com
+      secretName: iotdb-cloud-manager-tls
+  rules:
+    - host: iotdb.demo.service.pragmaticindustries.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: iotdb-cloud-manager
+                port:
+                  number: 8000

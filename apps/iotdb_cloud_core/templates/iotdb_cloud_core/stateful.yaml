@@ -1,0 +1,45 @@
+{% load kubernetes %}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ statefulset.name }}
+spec:
+  selector:
+    matchLabels:
+{{ selector_labels|indent:6 }}
+  serviceName: {{ service.name }}
+  replicas: 1 # by default is 1
+  template:
+    metadata:
+      labels:
+{{ labels|indent:8 }}
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: iotdb
+          image: apache/iotdb:0.11.2
+          ports:
+            - containerPort: 6667
+              name: iotdb
+          volumeMounts:
+            - name: storage
+              mountPath: /iotdb/data
+          # TODO Improve the Readiness Probe
+          readinessProbe:
+            tcpSocket:
+              port: 6667
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 6667
+            initialDelaySeconds: 10
+            periodSeconds: 10
+  volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

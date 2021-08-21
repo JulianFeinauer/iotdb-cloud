@@ -1,0 +1,15 @@
+{% load kubernetes %}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ service.name }}
+  labels:
+{{ labels|indent:4 }}
+spec:
+  ports:
+    - port: 6667
+      name: iotdb-external
+  selector:
+{{ selector_labels|indent:4 }}
+  type: LoadBalancer
+

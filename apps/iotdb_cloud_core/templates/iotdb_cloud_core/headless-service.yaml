@@ -1,0 +1,16 @@
+{% load kubernetes %}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ service.name }}-headless
+  labels:
+{{ labels|indent:4 }}
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 6667
+      name: iotdb-external
+  selector:
+{{ selector_labels|indent:4 }}
+

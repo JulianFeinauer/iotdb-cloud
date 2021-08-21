@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ job.name }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: portal
+          image: jfeinauer/iotdb-cloud:latest
+          imagePullPolicy: Always
+          args:
+            - "iotdb-setup"
+          env:
+            - name: IOTDB_PASSWORD
+              value: {{ job.password }}
+            - name: IOTDB_HOST
+              value: {{ service.name }}
+      restartPolicy: Never
+  backoffLimit: 100

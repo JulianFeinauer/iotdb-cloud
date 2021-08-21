@@ -5,6 +5,9 @@ if [ "$1" = "celery-beat" ]; then
 elif [ "$1" = "celery-worker" ]; then
    echo "Running Celery Worker..."
    celery -A iotdb_cloud worker -l INFO
+elif [ "$1" = "iotdb-setup" ]; then
+  echo "Setting Password..."
+   python set_password.py
 else
   echo "Start Server"
   # See https://stackoverflow.com/questions/15979428/what-is-the-appropriate-number-of-gunicorn-workers-for-each-amazon-instance-type
