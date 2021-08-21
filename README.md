@@ -27,3 +27,15 @@ In the background in Kubernetes the following ressources are created:
 - [ ] Limit Demo Accounts for Users
 - [ ] Send Email when instance is ready
 - [ ] Use TCP with Ingress to reduce external IPs that are needed
+
+## Installation in a Kubernetes Cluster
+
+* First, you need a running database (e.g. postgres)
+* And a provisioner for the certificates
+* Modify the namespace in `rbac.yaml` to create a suitable service user (change namespace)
+* Run it via `kubectl apply -n <your-namespace> -f rbac.yaml`
+* Modify the `kubernetes.yaml` accordingly (the `ConfigMap`) and service user from above, if necessary
+* Run it via `kubectl apply -n <your-namespace> -f kubernetes.yaml`
+* If wanted, adopt and apply `ingress.yaml` to configure an ingress ressource for the portal service
+
+Have fun!

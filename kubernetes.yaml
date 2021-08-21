@@ -164,26 +164,3 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: iotdb-manager-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  tls:
-    - hosts:
-        - iotdb.demo.service.pragmaticindustries.com
-      secretName: iotdb-cloud-manager-tls
-  rules:
-    - host: iotdb.demo.service.pragmaticindustries.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: iotdb-cloud-manager
-                port:
-                  number: 8000
