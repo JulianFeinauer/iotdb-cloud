@@ -27,6 +27,7 @@ In the background in Kubernetes the following ressources are created:
 - [ ] Limit Demo Accounts for Users
 - [ ] Send Email when instance is ready
 - [ ] Use TCP with Ingress to reduce external IPs that are needed
+- [ ] Use Proper Operator for Resource management (via CRD) instead of template files
 
 ## Installation in a Kubernetes Cluster
 
