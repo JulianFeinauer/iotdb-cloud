@@ -43,6 +43,6 @@ def create_release(uuid):
     logging.info("Job created. status='%s'" % resp.metadata.name)
 
     # Create and store it in a model
-    IoTDBRelease.objects.update(statefulset=statefulset["metadata"]["name"],
+    IoTDBRelease.objects.filter(pk=uuid).update(statefulset=statefulset["metadata"]["name"],
                                 headless_service=headless_service["metadata"]["name"],
                                 service=service["metadata"]["name"], init_job=job["metadata"]["name"])

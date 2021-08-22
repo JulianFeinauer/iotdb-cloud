@@ -1,10 +1,16 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from apps.iotdb_cloud_core.models import IoTDBRelease
 
 
 class IoTDBReleaseCreateForm(forms.ModelForm):
 
+    def clean_admin_password(self):
+        password = self.cleaned_data.get('admin_password')
+        if len(password) < 4:
+            raise ValidationError('Password too short')
+        return super().clean_admin_password()
 
     class Meta:
         model = IoTDBRelease

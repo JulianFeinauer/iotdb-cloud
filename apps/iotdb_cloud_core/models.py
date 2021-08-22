@@ -17,10 +17,10 @@ class IoTDBRelease(models.Model):
 
     started = models.DateTimeField(auto_now=True)
 
-    statefulset = models.TextField(null=True)
-    headless_service = models.TextField(null=True)
-    service = models.TextField(null=True)
-    init_job = models.TextField(null=True)
+    statefulset = models.TextField(null=True, unique=True)
+    headless_service = models.TextField(null=True, unique=True)
+    service = models.TextField(null=True, unique=True)
+    init_job = models.TextField(null=True, unique=True)
 
     admin_password = models.CharField(max_length=20, null=True)
 

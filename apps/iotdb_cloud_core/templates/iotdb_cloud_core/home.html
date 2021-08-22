@@ -21,7 +21,7 @@
                     <div class="col-md-6">
                         <div class="card mb-4 box-shadow">
                             <div class="alert alert-{% if release.ready %}success{% else %}danger{% endif %}" role="alert">
-                                Instance: <b>{{ release.name }}</b>
+                                Instance: <b>{{ release.model.release_name }}</b>
                             </div>
                             {#                            <div>Instance: {{ release.name }}</div>#}
                             <div class="card-body">
@@ -31,6 +31,10 @@
                                     <tr>
                                         <td>Version</td>
                                         <td>{{ release.model.cluster_version }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ID</td>
+                                        <td>{{ release.model.uuid }}</td>
                                     </tr>
                                     <tr>
                                         <td>Instance Available?</td>
@@ -46,7 +50,7 @@
                                     </tr>
                                     <tr>
                                         <td>Admin Password</td>
-                                        <td>{{ release.model.password }}</td>
+                                        <td>{{ release.model.admin_password }}</td>
                                     </tr>
                                     </tbody>
                                 </table>
