@@ -17,7 +17,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
         - name: iotdb
-          image: apache/iotdb:0.11.2
+          image: {{ statefulset.image }}
           ports:
             - containerPort: 6667
               name: iotdb

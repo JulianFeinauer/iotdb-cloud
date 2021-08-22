@@ -3,6 +3,8 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from kubernetes import config
 
+from apps.iotdb_cloud_core.models import IoTDBRelease
+
 
 def load_config():
     if settings.KUBERNETES_CONFIG == "INTERNAL":
@@ -10,10 +12,13 @@ def load_config():
     else:
         config.load_kube_config()
 
+
 def create_charts(identifier, admin_password):
+    release = IoTDBRelease.objects.get(pk=identifier)
     context = {
         "statefulset": {
-            "name": f"iotdb-{identifier}"
+            "name": f"iotdb-{identifier}",
+            "image": f"{release.cluster_version}"
         },
         "service": {
             "name": f"iotdb-{identifier}"
