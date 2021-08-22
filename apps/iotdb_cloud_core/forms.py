@@ -10,7 +10,7 @@ class IoTDBReleaseCreateForm(forms.ModelForm):
         password = self.cleaned_data.get('admin_password')
         if len(password) < 4:
             raise ValidationError('Password too short')
-        return super().clean_admin_password()
+        return password
 
     class Meta:
         model = IoTDBRelease
