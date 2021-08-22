@@ -6,6 +6,9 @@ data:
   # This should be a secret
   DATABASE: "postgres://postgres:postgres@postgresql-1629539069:5432/postgres"
   REDIS: "redis://redis:6379/0"
+  GITHUB_CLIENT_ID: ""
+  GITHUB_CLIENT_SECRET: ""
+  GITHUB_KEY: ""
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -41,6 +44,21 @@ spec:
                 configMapKeyRef:
                   name: iotdb-cloud-config
                   key: REDIS
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: GITHUB_CLIENT_ID
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: GITHUB_CLIENT_SECRET
+            - name: GITHUB_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: iotdb-cloud-config
+                  key: GITHUB_KEY
           ports:
             - name: web
               containerPort: 8000

@@ -167,9 +167,9 @@ SOCIALACCOUNT_PROVIDERS = {
         # (``socialaccount`` app) containing the required client
         # credentials, or list them here:
         'APP': {
-            'client_id': '123',
-            'secret': '456',
-            'key': ''
+            'client_id': env("GITHUB_CLIENT_ID", default=""),
+            'secret': env("GITHUB_CLIENT_ID", default=""),
+            'key': env("GITHUB_KEY", default="")
         }
     }
 }
