@@ -19,3 +19,6 @@ kubernetes==18.20.0
 
 # IoTDB
 apache-iotdb-nightly
+
+# Crispy Forms
+django-crispy-forms

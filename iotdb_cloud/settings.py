@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     # CElery,
     "django_celery_beat",
     # core
-    "apps.iotdb_cloud_core"
+    "apps.iotdb_cloud_core",
+    # Forms
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +136,7 @@ CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis")
 
 NAMESPACE = "iotdb-demo"
+
+KUBERNETES_CONFIG = env("KUBERNETES_CONFIG", default="INTERNAL")
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

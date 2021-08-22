@@ -1,17 +1,18 @@
-import json
 import uuid
 
-import yaml
 from django.conf import settings
-from django.template.loader import render_to_string
-from django.views.generic import TemplateView, RedirectView
-from kubernetes import config, client
-from kubernetes.client import V1DeploymentList, V1JobStatus, V1JobCondition, V1Job
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, RedirectView, CreateView
+from kubernetes import client
+from kubernetes.client import V1JobCondition, V1Job
 
 from apps.iotdb_cloud_core import kubernetes_utils
+from apps.iotdb_cloud_core.forms import IoTDBReleaseCreateForm
 from apps.iotdb_cloud_core.models import IoTDBRelease
+from apps.iotdb_cloud_core.tasks import create_release
 
 namespace = settings.NAMESPACE
+kubernetes_config = settings.KUBERNETES_CONFIG
 
 
 class HomeView(TemplateView):
@@ -20,7 +21,8 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
 
-        config.load_incluster_config()
+        kubernetes_utils.load_config()
+
         k8s_apps_v1 = client.AppsV1Api()
         core_api_v1 = client.CoreV1Api()
         batch_v1 = client.BatchV1Api()
@@ -69,8 +71,7 @@ class HomeView(TemplateView):
                 except Exception as e:
                     print(f"Exception: {e}")
 
-                releases.append({"name": release.service, "ip": external_ip, "status": status.status, "ready": ready,
-                                 "initialized": initialized, "password": release.admin_password})
+                releases.append({"model": release, "ip": external_ip, "status": status.status, "ready": ready})
             except Exception as e:
                 print(e)
 
@@ -86,7 +87,7 @@ class ExecuteView(RedirectView):
         # Execute the Sheduled task
         # execute.delay()
 
-        config.load_incluster_config()
+        kubernetes_utils.load_config()
 
         uuid_ = uuid.uuid4()
 
@@ -129,3 +130,20 @@ class ExecuteView(RedirectView):
                                     admin_password=admin_password)
 
         return super().get(request, *args, **kwargs)
+
+
+class CreateIoTDBReleaseView(CreateView):
+    model = IoTDBRelease
+    form_class = IoTDBReleaseCreateForm
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        form_valid = super().form_valid(form)
+
+        # Start Background Task
+        create_release.delay(self.object.pk)
+
+        return form_valid
+
+
+

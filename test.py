@@ -3,10 +3,10 @@ import os
 from iotdb.Session import Session
 
 
-ip = "85.215.224.213"
+ip = "85.215.237.118"
 port_ = "6667"
 username_ = 'root'
-password_ = 'b82a11e6-60e0-451a-b6d8-4f64b7c26f38'
+password_ = '607dd864-dd0e-4c08-9df9-2bb1796916d4'
 
 print("Prepare Session...")
 session = Session(ip, port_, user=username_, password=password_)

@@ -1,6 +1,14 @@
 import yaml
+from django.conf import settings
 from django.template.loader import render_to_string
+from kubernetes import config
 
+
+def load_config():
+    if settings.KUBERNETES_CONFIG == "INTERNAL":
+        config.load_incluster_config()
+    else:
+        config.load_kube_config()
 
 def create_charts(identifier, admin_password):
     context = {
