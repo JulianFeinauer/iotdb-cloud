@@ -59,6 +59,8 @@ spec:
                 configMapKeyRef:
                   name: iotdb-cloud-config
                   key: GITHUB_KEY
+            - name: DEBUG
+              value: "False"
           ports:
             - name: web
               containerPort: 8000
