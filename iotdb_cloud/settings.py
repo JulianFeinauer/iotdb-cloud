@@ -42,12 +42,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Needed for allauth
+    'django.contrib.sites',
     # CElery,
     "django_celery_beat",
-    # core
-    "apps.iotdb_cloud_core",
     # Forms
     'crispy_forms',
+    # Allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    # core
+    "apps.iotdb_cloud_core",
 ]
 
 MIDDLEWARE = [
@@ -74,6 +81,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -140,3 +149,27 @@ NAMESPACE = "iotdb-demo"
 KUBERNETES_CONFIG = env("KUBERNETES_CONFIG", default="INTERNAL")
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': env("GITHUB_CLIENT_ID", default=""),
+            'secret': env("GITHUB_CLIENT_ID", default=""),
+            'key': env("GITHUB_KEY", default="")
+        }
+    }
+}

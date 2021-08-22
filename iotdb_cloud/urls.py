@@ -19,4 +19,6 @@ from django.urls import path, include
 urlpatterns = [
     path("", include("apps.iotdb_cloud_core.urls")),
     path('admin/', admin.site.urls),
+    # Allauth
+    path('accounts/', include('allauth.urls')),
 ]
