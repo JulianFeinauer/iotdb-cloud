@@ -14,8 +14,8 @@ class IoTDBReleaseCreateForm(forms.ModelForm):
 
     class Meta:
         model = IoTDBRelease
-        fields = ["release_name", "cluster_version", "admin_password"]
+        fields = ["owner", "release_name", "cluster_version", "admin_password"]
         widgets = {
-            "uuid": forms.HiddenInput(),
+            "owner": forms.HiddenInput(),
             "admin_password": forms.PasswordInput()
         }

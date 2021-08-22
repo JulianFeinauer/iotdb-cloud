@@ -1,7 +1,9 @@
 import uuid
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, RedirectView, CreateView
 from kubernetes import client
 from kubernetes.client import V1JobCondition, V1Job
@@ -15,6 +17,7 @@ namespace = settings.NAMESPACE
 kubernetes_config = settings.KUBERNETES_CONFIG
 
 
+@method_decorator(login_required, name="dispatch")
 class HomeView(TemplateView):
     template_name = "iotdb_cloud_core/home.html"
 
@@ -34,7 +37,7 @@ class HomeView(TemplateView):
 
         releases = []
 
-        for release in IoTDBRelease.objects.all():
+        for release in self.get_queryset():
             print(f"Service: {release.service}")
             # name = json.loads(release.service.replace("'", '"'))["metadata"]["name"]
             # print(f"Name: {name}")
@@ -79,7 +82,14 @@ class HomeView(TemplateView):
 
         return context_data
 
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return IoTDBRelease.objects.all()
+        else:
+            return IoTDBRelease.objects.filter(owner=self.request.user)
 
+
+@method_decorator(login_required, name="dispatch")
 class ExecuteView(RedirectView):
     pattern_name = "home"
 
@@ -132,10 +142,24 @@ class ExecuteView(RedirectView):
         return super().get(request, *args, **kwargs)
 
 
+@method_decorator(login_required, name="dispatch")
 class CreateIoTDBReleaseView(CreateView):
     model = IoTDBRelease
     form_class = IoTDBReleaseCreateForm
     success_url = reverse_lazy("home")
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["owner"] = self.request.user
+        return initial
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if not int(form.data["owner"]) == self.request.user.id:
+            form.add_error(None, "There was an error processing your request!")
+            self.object = None
+            return self.form_invalid(form)
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         form_valid = super().form_valid(form)

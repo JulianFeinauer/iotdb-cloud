@@ -22,3 +22,6 @@ apache-iotdb-nightly
 
 # Crispy Forms
 django-crispy-forms
+
+# Allauth
+django-allauth

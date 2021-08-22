@@ -1,9 +1,13 @@
 import uuid as uuid
+
+from django.contrib.auth.models import User
 from django.db import models
 
 
 class IoTDBRelease(models.Model):
     uuid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+
+    owner = models.ForeignKey(User, null=False, blank=False, on_delete=models.RESTRICT, related_name="releases")
 
     release_name = models.CharField(max_length=50, null=True, blank=False, unique=True)
     cluster_version = models.CharField(max_length=50, choices=[
