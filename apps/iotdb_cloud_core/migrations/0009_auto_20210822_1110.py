@@ -5,18 +5,28 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
-class Migration(migrations.Migration):
+def create_default_user(apps, schema_editor):
+    User = apps.get_model("auth", "User")
 
+    try:
+        User.objects.get(id=1)
+    except:
+        User.objects.create(username="initial_user")
+
+
+class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('iotdb_cloud_core', '0008_auto_20210822_0832'),
     ]
 
     operations = [
+        migrations.RunPython(create_default_user),
         migrations.AddField(
             model_name='iotdbrelease',
             name='owner',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.RESTRICT, related_name='releases', to='auth.user'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.RESTRICT, related_name='releases',
+                                    to='auth.user'),
             preserve_default=False,
         ),
         migrations.AlterField(
